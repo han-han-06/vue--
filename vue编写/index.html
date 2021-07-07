@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div id="app">
+    <p>vhsf</p>
+    <p>{{name}}</p>
+  </div>
+  <script src="compile.js"></script>
+  <script src="kvue.js"></script>
+  <script>
+    let data = {
+        name:"涵涵",
+        testObj1:{
+          aa:"342",
+          bb:{
+            cc:342
+          }
+        }
+      }
+    // 实例化kvue
+    var newKVue = new KVue({
+      data,
+      el:"#app",
+      created() {
+        setTimeout(() => {
+          console.log('开始啦')
+          this.name = 'hahah'
+        }, 300);
+      }
+    });
+    // console.log(11,newKVue.testObj1);
+    // newKVue.$data.testObj1.aa = 'new-34242'
+    // console.log('name',newKVue.$data.name)
+    // console.log('testObj1',newKVue.$data.testObj1)
+  </script>
+</body>
+</html>
