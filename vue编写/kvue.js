@@ -1,7 +1,6 @@
 // 定义构造函数
 class KVue {
   constructor(options) {
-    console.log('options',options)
     // 把传过来的options变成自己内部的值
     this.$options = options;
     this.$data = options.data;
@@ -34,25 +33,24 @@ class KVue {
     const dep = new Dep(); // 定义了一个dep。每个dep实例和data中每个key有一对一关系
     Object.defineProperty(obj,name,{
       get() {
-        console.log('222name',name)
         // !!! 依赖收集
-        dep.target && dep.addDep(dep.target)
-        console.log('读数据了')
+        Dep.target && dep.addDep(Dep.target)
+        console.log('读数据了',name,dep,Dep.target)
         return value
       },
-      //???? 是个闭包？？？
+      //???? 是个闭包 ？？？ 确实是个闭包
       set(newVal) {
-        console.log('set')
+        console.log('set',name,dep)
         if(newVal !== value) {
           // 进行赋值
           value = newVal;
           // 通知去更新
-          dep.notify();
+          dep.notify(); 
         }
       }
     })
   }
-  // 代理
+  // 代理 实现this能访问this.$data中的值
   proxyData(key) {
     // 对this(KVue)实例进行劫持
     Object.defineProperty(this,key,{
@@ -64,7 +62,6 @@ class KVue {
       }
     })
   }
-  // 
 }
 
 
@@ -77,9 +74,14 @@ class Dep {
   addDep(dep) {
     this.deps.push(dep)
   }
+  // 是模糊还是更清楚
   // 通知更新
   notify() {
-    this.deps.forEach(dep => dep.update())
+    console.log('this.deps',this.deps)
+    this.deps.forEach(dep => {
+      console.log('更新的dep',dep)
+      dep.update()
+    })
   }
 }
 
@@ -93,11 +95,10 @@ class Watcher {
     this.key = key;
     Dep.target = this; // vue实例
     this.vm[this.key] // 读取值，触发get也就是触发依赖收集
-    Dep.target = null;// 清空，防止别的依赖收集会串台
+    Dep.target = null;// 清空，防止别的依赖收集会串台 为啥这里会触发呢，神奇了
   }
   update() {
-    console.log(342)
-    console.log(this.key + '更新了')
+    console.log('更新函数')
     this.cb.call(this.vm,this.vm[this.key])// 更新
   }
 }

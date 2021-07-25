@@ -9,13 +9,17 @@
 <body>
   <div id="app">
     <p>vhsf</p>
-    <p>{{name}}</p>
+    <p>name1:{{name}}</p>
+    <p>name2:{{name}}</p>
+    <p>name3:{{name}}</p>
+    <p>name4:{{name}}</p>
   </div>
   <script src="compile.js"></script>
   <script src="kvue.js"></script>
   <script>
     let data = {
         name:"涵涵",
+        age:22,
         testObj1:{
           aa:"342",
           bb:{
@@ -30,14 +34,14 @@
       created() {
         setTimeout(() => {
           console.log('开始啦')
-          this.name = 'hahah'
+          this.name = '3333'
         }, 300);
+        setTimeout(() => {
+          this.age = 444
+          console.log('11',this.age)
+        }, 3000);
       }
     });
-    // console.log(11,newKVue.testObj1);
-    // newKVue.$data.testObj1.aa = 'new-34242'
-    // console.log('name',newKVue.$data.name)
-    // console.log('testObj1',newKVue.$data.testObj1)
   </script>
 </body>
 </html>
