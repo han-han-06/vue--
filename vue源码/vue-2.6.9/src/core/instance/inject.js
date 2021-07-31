@@ -12,7 +12,7 @@ export function initProvide (vm: Component) {
       : provide
   }
 }
-
+// 传递注入进来的，是响应式
 export function initInjections (vm: Component) {
   const result = resolveInject(vm.$options.inject, vm)
   if (result) {

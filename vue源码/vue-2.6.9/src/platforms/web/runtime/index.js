@@ -1,6 +1,6 @@
 /* @flow */
 
-import Vue from 'core/index'
+import Vue from 'core/index' // src 里面的core index去找
 import config from 'core/config'
 import { extend, noop } from 'shared/util'
 import { mountComponent } from 'core/instance/lifecycle'
@@ -31,14 +31,18 @@ extend(Vue.options.directives, platformDirectives)
 extend(Vue.options.components, platformComponents)
 
 // install platform patch function
+// !!!!虚拟dom变成真实dom都在patch里面
 Vue.prototype.__patch__ = inBrowser ? patch : noop
 
 // public mount method
+// !!! 实现$mount
 Vue.prototype.$mount = function (
   el?: string | Element,
   hydrating?: boolean
 ): Component {
   el = el && inBrowser ? query(el) : undefined
+  // !!! mountComponent都干了啥（整个程序的挂载点）
+  // 根组件会执行mountComponent ，所有的子组件也会执行mountComponent
   return mountComponent(this, el, hydrating)
 }
 

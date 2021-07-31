@@ -25,7 +25,7 @@ let uid = 0
  */
 export default class Watcher {
   vm: Component;
-  expression: string;
+  expression: string;//!!! 观察绑定的表达式
   cb: Function;
   id: number;
   deep: boolean;
@@ -44,7 +44,7 @@ export default class Watcher {
 
   constructor (
     vm: Component,
-    expOrFn: string | Function,
+    expOrFn: string | Function,// 用户传进来的是啥
     cb: Function,
     options?: ?Object,
     isRenderWatcher?: boolean
@@ -77,6 +77,7 @@ export default class Watcher {
       : ''
     // parse expression for getter
     if (typeof expOrFn === 'function') {
+      //!!!! 是函数相当于是render watcher
       this.getter = expOrFn
     } else {
       this.getter = parsePath(expOrFn)
@@ -103,6 +104,7 @@ export default class Watcher {
     let value
     const vm = this.vm
     try {
+      // 执行getter函数 getter函数存取的就是updateComponent这个函数(更新函数)
       value = this.getter.call(vm, vm)
     } catch (e) {
       if (this.user) {
@@ -125,6 +127,7 @@ export default class Watcher {
   /**
    * Add a dependency to this directive.
    */
+  //!!!!data里面有两个字段，都作为属性传给子组件，当我这两个字段发生变化时我需要告诉子组件的dep也去更新相应的watcher
   addDep (dep: Dep) {
     const id = dep.id
     if (!this.newDepIds.has(id)) {
@@ -161,6 +164,7 @@ export default class Watcher {
    * Subscriber interface.
    * Will be called when a dependency changes.
    */
+  // 更新函数
   update () {
     /* istanbul ignore else */
     if (this.lazy) {
@@ -168,6 +172,7 @@ export default class Watcher {
     } else if (this.sync) {
       this.run()
     } else {
+      // !!!!实现操作批量处理（异步队列）
       queueWatcher(this)
     }
   }

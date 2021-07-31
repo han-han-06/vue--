@@ -17,7 +17,7 @@ import {
   mergeOptions,
   defineReactive
 } from '../util/index'
-
+// !!!全局api
 export function initGlobalAPI (Vue: GlobalAPI) {
   // config
   const configDef = {}

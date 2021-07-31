@@ -1,7 +1,7 @@
 /* @flow */
 
 import { namespaceMap } from 'web/util/index'
-
+// !!!! 这块是浏览器里面真实的dom操作（增加节点，删除节点等等）
 export function createElement (tagName: string, vnode: VNode): Element {
   const elm = document.createElement(tagName)
   if (tagName !== 'select') {

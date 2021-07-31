@@ -29,6 +29,8 @@ export default class Dep {
   }
 
   depend () {
+    // //!!!!data里面有两个字段，都作为属性传给子组件，当我这两个字段发生变化时我需要告诉子组件的dep也去更新相应的watcher
+    // 这块是dep知道该组件有多少个watcher，watcher也知道有多个个dep来管理这他，是多对多的关系
     if (Dep.target) {
       Dep.target.addDep(this)
     }

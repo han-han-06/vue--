@@ -23,7 +23,7 @@ if (process.argv[2]) {
   })
 }
 
-build(builds)
+build(builds) // 打包
 
 function build (builds) {
   let built = 0
@@ -44,7 +44,7 @@ function buildEntry (config) {
   const output = config.output
   const { file, banner } = output
   const isProd = /(min|prod)\.js$/.test(file)
-  return rollup.rollup(config)
+  return rollup.rollup(config) // 用rollup打包
     .then(bundle => bundle.generate(output))
     .then(({ output: [{ code }] }) => {
       if (isProd) {

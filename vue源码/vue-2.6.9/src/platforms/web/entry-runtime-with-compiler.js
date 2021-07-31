@@ -1,9 +1,8 @@
 /* @flow */
-
+// !!! 入口文件（在浏览器调试的入口文件）
 import config from 'core/config'
 import { warn, cached } from 'core/util/index'
 import { mark, measure } from 'core/util/perf'
-
 import Vue from './runtime/index'
 import { query } from './util/index'
 import { compileToFunctions } from './compiler/index'
@@ -13,7 +12,8 @@ const idToTemplate = cached(id => {
   const el = query(id)
   return el && el.innerHTML
 })
-
+console.log('走了么')
+// 扩展$mount 
 const mount = Vue.prototype.$mount
 Vue.prototype.$mount = function (
   el?: string | Element,
@@ -29,9 +29,10 @@ Vue.prototype.$mount = function (
     return this
   }
 
-  const options = this.$options
+  const options = this.$options // 当前配置选项，
+  // 若不存在render 选项则将template/el的设置转换为render函数
   // resolve template/el and convert to render function
-  if (!options.render) {
+  if (!options.render) { // 是不是配置render选项
     let template = options.template
     if (template) {
       if (typeof template === 'string') {
@@ -56,12 +57,13 @@ Vue.prototype.$mount = function (
     } else if (el) {
       template = getOuterHTML(el)
     }
+    //!!!! 重要，如果是模板字符串，需要用编译器去编译，得到render函数
     if (template) {
       /* istanbul ignore if */
       if (process.env.NODE_ENV !== 'production' && config.performance && mark) {
         mark('compile')
       }
-
+      // !!!!把模板字符串变成渲染函数都在compileToFunctions这个函数里面
       const { render, staticRenderFns } = compileToFunctions(template, {
         outputSourceRange: process.env.NODE_ENV !== 'production',
         shouldDecodeNewlines,
@@ -79,6 +81,7 @@ Vue.prototype.$mount = function (
       }
     }
   }
+  // 开始渲染
   return mount.call(this, el, hydrating)
 }
 

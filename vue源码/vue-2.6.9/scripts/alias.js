@@ -7,7 +7,7 @@ module.exports = {
   compiler: resolve('src/compiler'),
   core: resolve('src/core'),
   shared: resolve('src/shared'),
-  web: resolve('src/platforms/web'),
+  web: resolve('src/platforms/web'), // !!! 浏览器的入口
   weex: resolve('src/platforms/weex'),
   server: resolve('src/server'),
   sfc: resolve('src/sfc')

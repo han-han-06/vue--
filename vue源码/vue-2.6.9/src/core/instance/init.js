@@ -13,6 +13,7 @@ import { extend, mergeOptions, formatComponentName } from '../util/index'
 let uid = 0
 
 export function initMixin (Vue: Class<Component>) {
+  // options  el
   Vue.prototype._init = function (options?: Object) {
     const vm: Component = this
     // a uid
@@ -30,9 +31,9 @@ export function initMixin (Vue: Class<Component>) {
     vm._isVue = true
     // merge options
     if (options && options._isComponent) {
-      // optimize internal component instantiation
-      // since dynamic options merging is pretty slow, and none of the
-      // internal component options needs special treatment.
+      // optimize internal component instantiation 优化内部组件实例化
+      // since dynamic options merging is pretty slow, and none of the 因为动态选项合并非常慢，而且没有
+      // internal component options needs special treatment. 内部组件选项需要特殊处理
       initInternalComponent(vm, options)
     } else {
       vm.$options = mergeOptions(
@@ -49,12 +50,14 @@ export function initMixin (Vue: Class<Component>) {
     }
     // expose real self
     vm._self = vm
+    console.log('需要研究')
+    // !!! 需要研究
     initLifecycle(vm)
-    initEvents(vm)
+    initEvents(vm) // 监听器初始化
     initRender(vm)
     callHook(vm, 'beforeCreate')
     initInjections(vm) // resolve injections before data/props
-    initState(vm)
+    initState(vm) //!!!! 初始化组件的各种状态，data，computed，props
     initProvide(vm) // resolve provide after data/props
     callHook(vm, 'created')
 

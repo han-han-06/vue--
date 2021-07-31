@@ -4688,7 +4688,6 @@ function renderMixin (Vue) {
   Vue.prototype.$nextTick = function (fn) {
     return nextTick(fn, this)
   };
-
   Vue.prototype._render = function () {
     var vm = this;
     var ref = vm.$options;

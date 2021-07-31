@@ -17,6 +17,7 @@ import {
   validateProp,
   invokeWithErrorHandling
 } from '../util/index'
+// import Vue from '../../platforms/web/runtime'
 
 export let activeInstance: any = null
 export let isUpdatingChildComponent: boolean = false
@@ -28,8 +29,9 @@ export function setActiveInstance(vm: Component) {
     activeInstance = prevActiveInstance
   }
 }
-
+// 初始化了一些属性
 export function initLifecycle (vm: Component) {
+  console.log('initLifecycle')
   const options = vm.$options
 
   // locate first non-abstract parent
@@ -40,7 +42,7 @@ export function initLifecycle (vm: Component) {
     }
     parent.$children.push(vm)
   }
-
+  //!!!! 子组件创建时，父组件已经创建
   vm.$parent = parent
   vm.$root = parent ? parent.$root : vm
 
@@ -54,21 +56,23 @@ export function initLifecycle (vm: Component) {
   vm._isDestroyed = false
   vm._isBeingDestroyed = false
 }
-
+// !!!!!dom更新在这里
 export function lifecycleMixin (Vue: Class<Component>) {
   Vue.prototype._update = function (vnode: VNode, hydrating?: boolean) {
     const vm: Component = this
-    const prevEl = vm.$el
-    const prevVnode = vm._vnode
+    const prevEl = vm.$el //!!!! 拿出之前的真是dom
+    const prevVnode = vm._vnode //!!!! 拿出之前的虚拟节点
     const restoreActiveInstance = setActiveInstance(vm)
-    vm._vnode = vnode
+    vm._vnode = vnode //!!!! 之前的虚拟节点的vnode 等于现在更新后的vnode
     // Vue.prototype.__patch__ is injected in entry points
     // based on the rendering backend used.
     if (!prevVnode) {
+      // !!!!如果没有老的vnode ，则在初始化
       // initial render
       vm.$el = vm.__patch__(vm.$el, vnode, hydrating, false /* removeOnly */)
     } else {
-      // updates
+      // !!!!updates 这是更新阶段
+      // !!!! 更新周期直接different，返回新的dom
       vm.$el = vm.__patch__(prevVnode, vnode)
     }
     restoreActiveInstance()
@@ -145,6 +149,7 @@ export function mountComponent (
 ): Component {
   vm.$el = el
   if (!vm.$options.render) {
+    // 拿出render函数
     vm.$options.render = createEmptyVNode
     if (process.env.NODE_ENV !== 'production') {
       /* istanbul ignore if */
@@ -164,8 +169,9 @@ export function mountComponent (
       }
     }
   }
+  //!!!! 开始准备挂载
   callHook(vm, 'beforeMount')
-
+  // 定义更新函数
   let updateComponent
   /* istanbul ignore if */
   if (process.env.NODE_ENV !== 'production' && config.performance && mark) {
@@ -187,6 +193,8 @@ export function mountComponent (
     }
   } else {
     updateComponent = () => {
+      // 首先执行组件实例的render函数（vm._render()），返回vnode虚拟节点，
+      // 然后vnode作为参，执行update做真正的dom更新（把）
       vm._update(vm._render(), hydrating)
     }
   }
@@ -194,6 +202,8 @@ export function mountComponent (
   // we set this to vm._watcher inside the watcher's constructor
   // since the watcher's initial patch may call $forceUpdate (e.g. inside child
   // component's mounted hook), which relies on vm._watcher being already defined
+  // !!! 创建了一个组件相关的water实例（一个组件一个watcher，如果用户在组件里面写了wathcer选项或者$watcher都会额外创建watcher实例）
+  // !!! vm 组件实例 updateComponent 更新函数
   new Watcher(vm, updateComponent, noop, {
     before () {
       if (vm._isMounted && !vm._isDestroyed) {

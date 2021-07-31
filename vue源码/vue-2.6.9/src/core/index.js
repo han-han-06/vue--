@@ -2,7 +2,7 @@ import Vue from './instance/index'
 import { initGlobalAPI } from './global-api/index'
 import { isServerRendering } from 'core/util/env'
 import { FunctionalRenderContext } from 'core/vdom/create-functional-component'
-
+// !!!! 全局api的实现，vue.set啥的 全局api的初始化
 initGlobalAPI(Vue)
 
 Object.defineProperty(Vue.prototype, '$isServer', {

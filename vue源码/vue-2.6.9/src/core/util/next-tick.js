@@ -30,6 +30,9 @@ function flushCallbacks () {
 // where microtasks have too high a priority and fire in between supposedly
 // sequential events (e.g. #4521, #6690, which have workarounds)
 // or even between bubbling of the same event (#6566).
+// !!!!微任务决定了浏览器的刷新 通常一个宏任务结束之后浏览器会刷新一次，
+// setImmediate也是宏任务，但是比settimeout好
+// 涉及到重排和重绘， 操作dom会触发浏览器刷新
 let timerFunc
 
 // The nextTick behavior leverages the microtask queue, which can be accessed
@@ -83,7 +86,7 @@ if (typeof Promise !== 'undefined' && isNative(Promise)) {
     setTimeout(flushCallbacks, 0)
   }
 }
-
+// 
 export function nextTick (cb?: Function, ctx?: Object) {
   let _resolve
   callbacks.push(() => {

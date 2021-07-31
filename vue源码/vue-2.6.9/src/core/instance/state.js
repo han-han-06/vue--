@@ -108,7 +108,7 @@ function initProps (vm: Component, propsOptions: Object) {
   }
   toggleObserving(true)
 }
-
+// !!! 数据响应式
 function initData (vm: Component) {
   let data = vm.$options.data
   data = vm._data = typeof data === 'function'
@@ -144,6 +144,7 @@ function initData (vm: Component) {
         vm
       )
     } else if (!isReserved(key)) {
+      // !!!代理：  用于把data中的值能够通过this访问，
       proxy(vm, `_data`, key)
     }
   }
@@ -336,6 +337,7 @@ export function stateMixin (Vue: Class<Component>) {
       warn(`$props is readonly.`, this)
     }
   }
+  // !!!!!
   Object.defineProperty(Vue.prototype, '$data', dataDef)
   Object.defineProperty(Vue.prototype, '$props', propsDef)
 

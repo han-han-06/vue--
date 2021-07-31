@@ -36,7 +36,7 @@ export function toggleObserving (value: boolean) {
  */
 export class Observer {
   value: any;
-  dep: Dep;
+  dep: Dep; //!!! Dep 用来管理
   vmCount: number; // number of vms that have this object as root $data
 
   constructor (value: any) {
@@ -44,14 +44,16 @@ export class Observer {
     this.dep = new Dep()
     this.vmCount = 0
     def(value, '__ob__', this)
+    // 判断data是不是数组
     if (Array.isArray(value)) {
-      if (hasProto) {
+      if (hasProto) { // 数组上有没有原型
         protoAugment(value, arrayMethods)
       } else {
         copyAugment(value, arrayMethods, arrayKeys)
       }
       this.observeArray(value)
     } else {
+      // 是对象
       this.walk(value)
     }
   }
@@ -71,6 +73,7 @@ export class Observer {
   /**
    * Observe a list of Array items.
    */
+  // 遍历数组 递归遍历数组只对数组中的对象进行监听，数组中的是字符串啥的就不能进行监听
   observeArray (items: Array<any>) {
     for (let i = 0, l = items.length; i < l; i++) {
       observe(items[i])
@@ -107,11 +110,12 @@ function copyAugment (target: Object, src: Object, keys: Array<string>) {
  * returns the new observer if successfully observed,
  * or the existing observer if the value already has one.
  */
+// 子任务 value存取的是data中的所有属性
 export function observe (value: any, asRootData: ?boolean): Observer | void {
   if (!isObject(value) || value instanceof VNode) {
     return
   }
-  let ob: Observer | void
+  let ob: Observer | void  // Observer 观察者 拿到Observer实例
   if (hasOwn(value, '__ob__') && value.__ob__ instanceof Observer) {
     ob = value.__ob__
   } else if (
@@ -133,37 +137,43 @@ export function observe (value: any, asRootData: ?boolean): Observer | void {
  * Define a reactive property on an Object.
  */
 export function defineReactive (
-  obj: Object,
-  key: string,
+  obj: Object, //!!! data对象
+  key: string, // !!! 属性
   val: any,
   customSetter?: ?Function,
   shallow?: boolean
 ) {
   const dep = new Dep()
-
+  // 看看对象里面有没有定义这个key
   const property = Object.getOwnPropertyDescriptor(obj, key)
   if (property && property.configurable === false) {
     return
   }
 
   // cater for pre-defined getter/setters
+  // 定义getter函数
   const getter = property && property.get
   const setter = property && property.set
   if ((!getter || setter) && arguments.length === 2) {
+    // 获取值
     val = obj[key]
   }
-
+  // 递归的响应式处理 childOb是个observe对象
   let childOb = !shallow && observe(val)
+  // 数据的拦截
   Object.defineProperty(obj, key, {
     enumerable: true,
     configurable: true,
     get: function reactiveGetter () {
       const value = getter ? getter.call(obj) : val
       if (Dep.target) {
+        // 加入到dep去管理watcher
         dep.depend()
+        // 如果存在子对象
         if (childOb) {
           childOb.dep.depend()
           if (Array.isArray(value)) {
+            //如果值是数组，特殊处理
             dependArray(value)
           }
         }
@@ -187,7 +197,9 @@ export function defineReactive (
       } else {
         val = newVal
       }
+      // 为什么需要递归，一开始是str 但是变成了{}对象，则需要递归一下
       childOb = !shallow && observe(newVal)
+      // 去通知
       dep.notify()
     }
   })
@@ -198,6 +210,7 @@ export function defineReactive (
  * triggers change notification if the property doesn't
  * already exist.
  */
+// 设置一个对象的属性。添加新属性，如果属性不存在，则触发更改通知。
 export function set (target: Array<any> | Object, key: any, val: any): any {
   if (process.env.NODE_ENV !== 'production' &&
     (isUndef(target) || isPrimitive(target))

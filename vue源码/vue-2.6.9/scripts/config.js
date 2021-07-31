@@ -68,10 +68,10 @@ const builds = {
     alias: { he: './entity-decoder' },
     banner
   },
-  // Runtime only ES modules build (for bundlers)
-  'web-runtime-esm': {
+  // Runtime only ES modules build (for bundlers) 
+  'web-runtime-esm': { //!!! webpack的打包方式
     entry: resolve('web/entry-runtime.js'),
-    dest: resolve('dist/vue.runtime.esm.js'),
+    dest: resolve('dist/vue.runtime.esm.js'), // 
     format: 'es',
     banner
   },
@@ -120,7 +120,7 @@ const builds = {
     banner
   },
   // Runtime+compiler development build (Browser)
-  'web-full-dev': {
+  'web-full-dev': { //!!! 浏览器重要跑这个版本，咱们本地跑用这个
     entry: resolve('web/entry-runtime-with-compiler.js'),
     dest: resolve('dist/vue.js'),
     format: 'umd',
