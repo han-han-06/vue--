@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div id="demo">
+    {{getA}}
+    <!-- <button-counter></button-counter> -->
+    <p>奉节县</p>
+    <p>
+      {{getA}}
+    </p>
+  </div>
+  <script src="../../dist/vue.js"></script>
+  <script>
+    // register the grid component
+    // Vue.component('button-counter', {
+    //   data: function () {
+    //     return {
+    //       count: 0
+    //     }
+    //   },
+    //   template: '<div>You clicked me {{ count }} times.</div>'
+    // })
+    // bootstrap the demo
+    var demo = new Vue({
+      el: '#demo',
+      data: {
+        searchQuery: '',
+        gridColumns: ['name', 'power'],
+      },
+      computed:{
+        getA() {
+          return '3242'
+        }
+      }
+      // watch:{
+      //   searchQuery:{
+      //     deep: true,
+      //     handler () {
+      //       console.log('监听searchQuery')
+      //     },
+      //     immediate:true
+      //   }
+      // }
+    })
+
+  </script>
+</body>
+</html>

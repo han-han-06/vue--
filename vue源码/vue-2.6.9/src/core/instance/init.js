@@ -11,7 +11,7 @@ import { initProvide, initInjections } from './inject'
 import { extend, mergeOptions, formatComponentName } from '../util/index'
 
 let uid = 0
-
+// 给vue原型挂载_init方法
 export function initMixin (Vue: Class<Component>) {
   // options  el
   Vue.prototype._init = function (options?: Object) {
@@ -28,8 +28,10 @@ export function initMixin (Vue: Class<Component>) {
     }
 
     // a flag to avoid this being observed
+    // 如果是vue实例不做响应式处理
     vm._isVue = true
     // merge options
+    // 合并options（用户传入的options和vue构造函数中的options进行合并）
     if (options && options._isComponent) {
       // optimize internal component instantiation 优化内部组件实例化
       // since dynamic options merging is pretty slow, and none of the 因为动态选项合并非常慢，而且没有
@@ -43,6 +45,7 @@ export function initMixin (Vue: Class<Component>) {
       )
     }
     /* istanbul ignore else */
+    // 赋值渲染过程的代理对象
     if (process.env.NODE_ENV !== 'production') {
       initProxy(vm)
     } else {
@@ -51,24 +54,25 @@ export function initMixin (Vue: Class<Component>) {
     // expose real self
     vm._self = vm
     console.log('需要研究')
-    // !!! 需要研究
-    initLifecycle(vm)
-    initEvents(vm) // 监听器初始化
-    initRender(vm)
-    callHook(vm, 'beforeCreate')
-    initInjections(vm) // resolve injections before data/props
+    // !!! 对vue实例进行初始化 需要研究
+    initLifecycle(vm) // 初始化属性
+    initEvents(vm) // 初始化事件 监听器初始化
+    initRender(vm) // 初始化了render函数，但是没调用呢
+    callHook(vm, 'beforeCreate') // 触发声明周期的钩子函数
+    initInjections(vm) // 实现依赖注入 resolve injections before data/props
     initState(vm) //!!!! 初始化组件的各种状态，data，computed，props
     initProvide(vm) // resolve provide after data/props
-    callHook(vm, 'created')
-
+    callHook(vm, 'created')// 触发声明周期的钩子函数
+    console.log('走完created了')
     /* istanbul ignore if */
     if (process.env.NODE_ENV !== 'production' && config.performance && mark) {
       vm._name = formatComponentName(vm, false)
       mark(endTag)
       measure(`vue ${vm._name} init`, startTag, endTag)
     }
-
+    // 挂载整个页面
     if (vm.$options.el) {
+      console.log('走mounted了把',vm.$options.el)
       vm.$mount(vm.$options.el)
     }
   }

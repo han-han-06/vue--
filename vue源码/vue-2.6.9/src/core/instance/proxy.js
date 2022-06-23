@@ -74,7 +74,6 @@ if (process.env.NODE_ENV !== 'production') {
       return target[key]
     }
   }
-
   initProxy = function initProxy (vm) {
     if (hasProxy) {
       // determine which proxy handler to use

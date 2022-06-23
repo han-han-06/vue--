@@ -65,8 +65,8 @@ export function createASTElement (
   return {
     type: 1,
     tag,
-    attrsList: attrs,
-    attrsMap: makeAttrsMap(attrs),
+    attrsList: attrs,// 标签属性数组
+    attrsMap: makeAttrsMap(attrs),// 把属性转换成对象形式
     rawAttrsMap: {},
     parent,
     children: []
@@ -76,8 +76,9 @@ export function createASTElement (
 /**
  * Convert HTML string to AST.
  */
+// parse 这个函数主要是遍历html模板字符串，把html模板字符串转换成ast对象，模板字符串中的属性和指令会存储在对应的ast对象中，然后生成ast对象
 export function parse (
-  template: string,
+  template: string,// template 模板字符串（去除了前后空格）
   options: CompilerOptions
 ): ASTElement | void {
   warn = options.warn || baseWarn
@@ -200,7 +201,7 @@ export function parse (
       )
     }
   }
-
+  // 解析html模板
   parseHTML(template, {
     warn,
     expectHTML: options.expectHTML,
@@ -210,6 +211,8 @@ export function parse (
     shouldDecodeNewlinesForHref: options.shouldDecodeNewlinesForHref,
     shouldKeepComment: options.comments,
     outputSourceRange: options.outputSourceRange,
+    // 解析过程中的回调函数，解析开始标签 
+    // unary 是否是闭合标签
     start (tag, attrs, unary, start, end) {
       // check namespace.
       // inherit parent ns if there is one
@@ -220,7 +223,7 @@ export function parse (
       if (isIE && ns === 'svg') {
         attrs = guardIESVGBug(attrs)
       }
-
+      // !!! 创建了ast对象
       let element: ASTElement = createASTElement(tag, attrs, currentParent)
       if (ns) {
         element.ns = ns
@@ -263,7 +266,7 @@ export function parse (
       for (let i = 0; i < preTransforms.length; i++) {
         element = preTransforms[i](element, options) || element
       }
-
+      // 处理v-pre指令
       if (!inVPre) {
         processPre(element)
         if (element.pre) {
@@ -277,6 +280,7 @@ export function parse (
         processRawAttrs(element)
       } else if (!element.processed) {
         // structural directives
+        // 处理v-for，v-if，v-once指令
         processFor(element)
         processIf(element)
         processOnce(element)
@@ -296,7 +300,7 @@ export function parse (
         closeElement(element)
       }
     },
-
+    // 解析过程中的回调函数，解析结束标签
     end (tag, start, end) {
       const element = stack[stack.length - 1]
       // pop stack
@@ -307,7 +311,7 @@ export function parse (
       }
       closeElement(element)
     },
-
+    // 解析过程中的回调函数，解析文本内容
     chars (text: string, start: number, end: number) {
       if (!currentParent) {
         if (process.env.NODE_ENV !== 'production') {
@@ -379,6 +383,7 @@ export function parse (
         }
       }
     },
+    // 解析过程中的回调函数，解析注释标签
     comment (text: string, start, end) {
       // adding anyting as a sibling to the root node is forbidden
       // comments should still be allowed, but ignored

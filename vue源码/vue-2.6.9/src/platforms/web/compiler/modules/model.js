@@ -9,7 +9,7 @@
  *   <input v-else-if="type === 'radio'" type="radio" v-model="data[type]">
  *   <input v-else :type="type" v-model="data[type]">
  */
-
+// 处理和v-if一起使用的v-model
 import {
   addRawAttr,
   getBindingAttr,

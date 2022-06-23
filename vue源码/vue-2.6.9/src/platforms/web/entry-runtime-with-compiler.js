@@ -1,5 +1,4 @@
 /* @flow */
-// !!! 入口文件（在浏览器调试的入口文件）
 import config from 'core/config'
 import { warn, cached } from 'core/util/index'
 import { mark, measure } from 'core/util/perf'
@@ -7,20 +6,22 @@ import Vue from './runtime/index'
 import { query } from './util/index'
 import { compileToFunctions } from './compiler/index'
 import { shouldDecodeNewlines, shouldDecodeNewlinesForHref } from './util/compat'
-
+// !!! 入口文件（在浏览器调试的入口文件）
+console.log('这是vue文件的入口')
 const idToTemplate = cached(id => {
   const el = query(id)
   return el && el.innerHTML
 })
-console.log('走了么')
 // 扩展$mount 
 const mount = Vue.prototype.$mount
 Vue.prototype.$mount = function (
   el?: string | Element,
   hydrating?: boolean
 ): Component {
-  el = el && query(el)
+  console.log('5555555走了么')
 
+  el = el && query(el)
+  console.log('mounted el',el)
   /* istanbul ignore if */
   if (el === document.body || el === document.documentElement) {
     process.env.NODE_ENV !== 'production' && warn(
@@ -96,7 +97,7 @@ function getOuterHTML (el: Element): string {
     const container = document.createElement('div')
     container.appendChild(el.cloneNode(true))
     return container.innerHTML
-  }
+  } 
 }
 
 Vue.compile = compileToFunctions

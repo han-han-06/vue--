@@ -35,6 +35,7 @@ export function initLifecycle (vm: Component) {
   const options = vm.$options
 
   // locate first non-abstract parent
+  // 找到父组件，把当前组件添加到父组件的$children中去
   let parent = options.parent
   if (parent && !options.abstract) {
     while (parent.$options.abstract && parent.$parent) {
@@ -61,12 +62,12 @@ export function lifecycleMixin (Vue: Class<Component>) {
   Vue.prototype._update = function (vnode: VNode, hydrating?: boolean) {
     const vm: Component = this
     const prevEl = vm.$el //!!!! 拿出之前的真是dom
-    const prevVnode = vm._vnode //!!!! 拿出之前的虚拟节点
+    const prevVnode = vm._vnode //!!!! 拿出之前的虚拟节点  _vnode：是之前所处理过的vnode对象
     const restoreActiveInstance = setActiveInstance(vm)
     vm._vnode = vnode //!!!! 之前的虚拟节点的vnode 等于现在更新后的vnode
     // Vue.prototype.__patch__ is injected in entry points
     // based on the rendering backend used.
-    if (!prevVnode) {
+    if (!prevVnode) {// 首次渲染
       // !!!!如果没有老的vnode ，则在初始化
       // initial render
       vm.$el = vm.__patch__(vm.$el, vnode, hydrating, false /* removeOnly */)
@@ -204,6 +205,7 @@ export function mountComponent (
   // component's mounted hook), which relies on vm._watcher being already defined
   // !!! 创建了一个组件相关的water实例（一个组件一个watcher，如果用户在组件里面写了wathcer选项或者$watcher都会额外创建watcher实例）
   // !!! vm 组件实例 updateComponent 更新函数
+  // !!! 初始化的时候建了第一个渲染watcher
   new Watcher(vm, updateComponent, noop, {
     before () {
       if (vm._isMounted && !vm._isDestroyed) {

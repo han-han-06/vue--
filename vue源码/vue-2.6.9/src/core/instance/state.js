@@ -44,19 +44,20 @@ export function proxy (target: Object, sourceKey: string, key: string) {
   }
   Object.defineProperty(target, key, sharedPropertyDefinition)
 }
-
+// 初始化各种状态
 export function initState (vm: Component) {
   vm._watchers = []
   const opts = vm.$options
-  if (opts.props) initProps(vm, opts.props)
-  if (opts.methods) initMethods(vm, opts.methods)
-  if (opts.data) {
+  if (opts.props) initProps(vm, opts.props) // 把props成员变成响应式数据，并注册到vue实例上
+  if (opts.methods) initMethods(vm, opts.methods)// 把method成员注册到vue实例上
+  if (opts.data) {  // 把data中的成员变成响应式，并注册到vue实例上
     initData(vm)
   } else {
     observe(vm._data = {}, true /* asRootData */)
   }
   if (opts.computed) initComputed(vm, opts.computed)
   if (opts.watch && opts.watch !== nativeWatch) {
+    
     initWatch(vm, opts.watch)
   }
 }
@@ -97,12 +98,13 @@ function initProps (vm: Component, propsOptions: Object) {
         }
       })
     } else {
+      // 把props变成响应式的
       defineReactive(props, key, value)
     }
     // static props are already proxied on the component's prototype
     // during Vue.extend(). We only need to proxy props defined at
     // instantiation here.
-    if (!(key in vm)) {
+    if (!(key in vm)) { // 能通过this访问
       proxy(vm, `_props`, key)
     }
   }
@@ -184,6 +186,7 @@ function initComputed (vm: Component, computed: Object) {
     }
 
     if (!isSSR) {
+
       // create internal watcher for the computed property.
       watchers[key] = new Watcher(
         vm,
@@ -289,8 +292,8 @@ function initMethods (vm: Component, methods: Object) {
 }
 
 function initWatch (vm: Component, watch: Object) {
-  for (const key in watch) {
-    const handler = watch[key]
+  for (const key in watch) { // key 是用户定义的监听属性
+    const handler = watch[key];// 深度监听的话，这个是监听属性后面的对象，包括hanlder啥的属性
     if (Array.isArray(handler)) {
       for (let i = 0; i < handler.length; i++) {
         createWatcher(vm, key, handler[i])
@@ -309,9 +312,9 @@ function createWatcher (
 ) {
   if (isPlainObject(handler)) {
     options = handler
-    handler = handler.handler
+    handler = handler.handler // 用户传进来的handler
   }
-  if (typeof handler === 'string') {
+  if (typeof handler === 'string') { // handler 是字符串的话，habder就是，methods中的某个方法
     handler = vm[handler]
   }
   return vm.$watch(expOrFn, handler, options)
@@ -346,15 +349,16 @@ export function stateMixin (Vue: Class<Component>) {
 
   Vue.prototype.$watch = function (
     expOrFn: string | Function,
-    cb: any,
+    cb: any,// 用户定义的回调函数
     options?: Object
   ): Function {
     const vm: Component = this
     if (isPlainObject(cb)) {
       return createWatcher(vm, expOrFn, cb, options)
     }
-    options = options || {}
-    options.user = true
+    options = options || {} // options 用户穿过来的包含hander的对象
+    options.user = true// 用户watcher
+    // expOrFn 是监听的属性值
     const watcher = new Watcher(vm, expOrFn, cb, options)
     if (options.immediate) {
       try {

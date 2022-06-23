@@ -30,8 +30,8 @@ export class CodegenState {
     const isReservedTag = options.isReservedTag || no
     this.maybeComponent = (el: ASTElement) => !!el.component || !isReservedTag(el.tag)
     this.onceId = 0
-    this.staticRenderFns = []
-    this.pre = false
+    this.staticRenderFns = []// 存储静态根节点生成的代码（每一项是字符串形式的代码）
+    this.pre = false // 当前处理的节点是否使用v-pre标记的
   }
 }
 
@@ -44,32 +44,32 @@ export function generate (
   ast: ASTElement | void,
   options: CompilerOptions
 ): CodegenResult {
-  const state = new CodegenState(options)
-  const code = ast ? genElement(ast, state) : '_c("div")'
+  const state = new CodegenState(options) // 
+  const code = ast ? genElement(ast, state) : '_c("div")' // _c:就是creatElement
   return {
-    render: `with(this){return ${code}}`,
-    staticRenderFns: state.staticRenderFns
+    render: `with(this){return ${code}}`, // ast对象生成的vnode代码的字符串形式
+    staticRenderFns: state.staticRenderFns // 静态根节点对应的渲染函数
   }
 }
-
+// genElement : 把ast对象转换成代码的位置
 export function genElement (el: ASTElement, state: CodegenState): string {
-  if (el.parent) {
+  if (el.parent) {// 父节点是静态的话则子节点也是静态的
     el.pre = el.pre || el.parent.pre
   }
-
-  if (el.staticRoot && !el.staticProcessed) {
+  // 下面返回的都是字符串形式的js代码
+  if (el.staticRoot && !el.staticProcessed) {// 静态根节点  staticProcessed：当前节点是否被处理
     return genStatic(el, state)
-  } else if (el.once && !el.onceProcessed) {
+  } else if (el.once && !el.onceProcessed) {// v-once
     return genOnce(el, state)
-  } else if (el.for && !el.forProcessed) {
+  } else if (el.for && !el.forProcessed) {// v-for
     return genFor(el, state)
-  } else if (el.if && !el.ifProcessed) {
+  } else if (el.if && !el.ifProcessed) {// v-if
     return genIf(el, state)
-  } else if (el.tag === 'template' && !el.slotTarget && !state.pre) {
+  } else if (el.tag === 'template' && !el.slotTarget && !state.pre) {// template标签，生成子节点
     return genChildren(el, state) || 'void 0'
   } else if (el.tag === 'slot') {
     return genSlot(el, state)
-  } else {
+  } else {// 组件和内置标签
     // component or element
     let code
     if (el.component) {
@@ -77,9 +77,10 @@ export function genElement (el: ASTElement, state: CodegenState): string {
     } else {
       let data
       if (!el.plain || (el.pre && state.maybeComponent(el))) {
+        // 把ast对象的相应属性转换成createlement中data（第二个参数）对象中所需要的对象字符串形式
         data = genData(el, state)
       }
-
+      // 转换子节点，也就是createlement中的第三个参数children
       const children = el.inlineTemplate ? null : genChildren(el, state, true)
       code = `_c('${el.tag}'${
         data ? `,${data}` : '' // data
@@ -105,8 +106,10 @@ function genStatic (el: ASTElement, state: CodegenState): string {
   if (el.pre) {
     state.pre = el.pre
   }
+  // 把静态根节点生成vnode对应的js代码
   state.staticRenderFns.push(`with(this){return ${genElement(el, state)}}`)
   state.pre = originalPreState
+  // 返回函数形式的js代码字符串
   return `_m(${
     state.staticRenderFns.length - 1
   }${
@@ -215,7 +218,8 @@ export function genFor (
       `return ${(altGen || genElement)(el, state)}` +
     '})'
 }
-
+// 把ast对象的相应属性转换成createlement中data对象中所需要的对象字符串形式
+// 返回的是普通js对象的字符串形式
 export function genData (el: ASTElement, state: CodegenState): string {
   let data = '{'
 
@@ -481,10 +485,13 @@ export function genChildren (
         : ``
       return `${(altGenElement || genElement)(el, state)}${normalizationType}`
     }
+    // 拍平数组
     const normalizationType = checkSkip
       ? getNormalizationType(children, state.maybeComponent)
       : 0
+      // 把数组中的每一个对象通过genNode生成对应的代码形式
     const gen = altGenNode || genNode
+    // 通过join合并成对应的字符串，最后拼接normalizationType变量，记录抻平数组
     return `[${children.map(c => gen(c, state)).join(',')}]${
       normalizationType ? `,${normalizationType}` : ''
     }`
@@ -523,16 +530,17 @@ function needsNormalization (el: ASTElement): boolean {
 }
 
 function genNode (node: ASTNode, state: CodegenState): string {
-  if (node.type === 1) {
+  if (node.type === 1) {// 标签
     return genElement(node, state)
-  } else if (node.type === 3 && node.isComment) {
+  } else if (node.type === 3 && node.isComment) {// 注释节点
     return genComment(node)
-  } else {
+  } else {// 文本节点
     return genText(node)
   }
 }
 
 export function genText (text: ASTText | ASTExpression): string {
+  // text.type === 2 表达式   transformSpecialNewlines:特殊形式的东西进行修正
   return `_v(${text.type === 2
     ? text.expression // no need for () because already wrapped in _s()
     : transformSpecialNewlines(JSON.stringify(text.text))
@@ -540,6 +548,7 @@ export function genText (text: ASTText | ASTExpression): string {
 }
 
 export function genComment (comment: ASTText): string {
+  // JSON.stringify(comment.text) 字符串加上引号。比如 hello -> "hello"
   return `_e(${JSON.stringify(comment.text)})`
 }
 

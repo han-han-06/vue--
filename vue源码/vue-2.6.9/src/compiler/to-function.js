@@ -26,7 +26,7 @@ export function createCompileToFunctionFn (compile: Function): Function {
     options?: CompilerOptions,
     vm?: Component
   ): CompiledFunctionResult {
-    options = extend({}, options)
+    options = extend({}, options)// 克隆了一份options
     const warn = options.warn || baseWarn
     delete options.warn
 
@@ -49,14 +49,18 @@ export function createCompileToFunctionFn (compile: Function): Function {
     }
 
     // check cache
+    // 1. 读取缓存中的CompiledFunctionResult 对象，如果有直接返回
+    //  options.delimiters 这个属性可以把差值表达式改成任意的形式，默认的差值表达式是{{}}，可以改成别的比如模板语法啥的
     const key = options.delimiters
       ? String(options.delimiters) + template
       : template
+      // key 是模板内容的key
     if (cache[key]) {
       return cache[key]
     }
 
     // compile
+    // 2. 把模板编译为编译对象，render为字符串形式的js代码
     const compiled = compile(template, options)
 
     // check compilation errors/tips
@@ -90,7 +94,9 @@ export function createCompileToFunctionFn (compile: Function): Function {
     // turn code into functions
     const res = {}
     const fnGenErrors = []
+    // 3. 把字符串形式的js代码转成函数，通过new Function转换成匿名函数
     res.render = createFunction(compiled.render, fnGenErrors)
+    // 把静态节点的每一个函数字符串都转化成相应的匿名函数
     res.staticRenderFns = compiled.staticRenderFns.map(code => {
       return createFunction(code, fnGenErrors)
     })
@@ -108,7 +114,7 @@ export function createCompileToFunctionFn (compile: Function): Function {
         )
       }
     }
-
+    // 4. 缓存并返回res对象(render，staticRenderFns方法)
     return (cache[key] = res)
   }
 }

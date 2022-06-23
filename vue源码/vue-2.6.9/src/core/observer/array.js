@@ -17,7 +17,7 @@ const methodsToPatch = [
   'sort',
   'reverse'
 ]
-
+console.log('即使不导入也会走对么')
 /**
  * Intercept mutating methods and emit events
  */

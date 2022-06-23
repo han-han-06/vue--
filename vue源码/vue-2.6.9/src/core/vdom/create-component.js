@@ -100,19 +100,20 @@ const hooksToMerge = Object.keys(componentVNodeHooks)
 
 export function createComponent (
   Ctor: Class<Component> | Function | Object | void,
-  data: ?VNodeData,
-  context: Component,
-  children: ?Array<VNode>,
+  data: ?VNodeData,// 创建vnode需要的数据
+  context: Component,// vue的实例或组件的实例
+  children: ?Array<VNode>,// 子节点数组
   tag?: string
 ): VNode | Array<VNode> | void {
   if (isUndef(Ctor)) {
     return
   }
-
+  // vue构造函数
   const baseCtor = context.$options._base
 
   // plain options object: turn it into a constructor
-  if (isObject(Ctor)) {
+  // 如果ctor不是一个构造函数，而是一个对象的话，使用vue.extend 创造一个子组件的构造函数
+  if (isObject(Ctor)) { 
     Ctor = baseCtor.extend(Ctor)
   }
 
@@ -126,6 +127,7 @@ export function createComponent (
   }
 
   // async component
+  // 异步组件
   let asyncFactory
   if (isUndef(Ctor.cid)) {
     asyncFactory = Ctor
@@ -148,9 +150,11 @@ export function createComponent (
 
   // resolve constructor options in case global mixins are applied after
   // component constructor creation
+  // 当组件创建完毕后，合并选项
   resolveConstructorOptions(Ctor)
 
   // transform component v-model data into props & events
+  // 创建指令
   if (isDef(data.model)) {
     transformModel(Ctor.options, data)
   }
@@ -183,10 +187,12 @@ export function createComponent (
   }
 
   // install component management hooks onto the placeholder node
+  // 安装组件的钩子函数
   installComponentHooks(data)
 
   // return a placeholder vnode
   const name = Ctor.options.name || tag
+  // !! 创建vnode
   const vnode = new VNode(
     `vue-component-${Ctor.cid}${name ? `-${name}` : ''}`,
     data, undefined, undefined, undefined, context,

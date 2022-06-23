@@ -9,12 +9,15 @@ import {
 } from '../util/index'
 import { updateListeners } from '../vdom/helpers/index'
 // !!!! 事件初始化
+// 获取父组件附加的事件并注册到当前组件
 export function initEvents (vm: Component) {
   vm._events = Object.create(null)
   vm._hasHookEvent = false
   // init parent attached events
+  // 获取父元素上添加的时间
   const listeners = vm.$options._parentListeners
   if (listeners) {
+    // 注册自定义时间
     updateComponentListeners(vm, listeners)
   }
 }

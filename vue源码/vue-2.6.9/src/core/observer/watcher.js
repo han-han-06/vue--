@@ -44,7 +44,7 @@ export default class Watcher {
 
   constructor (
     vm: Component,
-    expOrFn: string | Function,// 用户传进来的是啥
+    expOrFn: string | Function,// 用户传进来的是：用户定义的对象的属性值
     cb: Function,
     options?: ?Object,
     isRenderWatcher?: boolean
@@ -80,7 +80,7 @@ export default class Watcher {
       //!!!! 是函数相当于是render watcher
       this.getter = expOrFn
     } else {
-      this.getter = parsePath(expOrFn)
+      this.getter = parsePath(expOrFn)// 用户watcher调parsePath(expOrFn)，获取该监听属性的值的函数
       if (!this.getter) {
         this.getter = noop
         process.env.NODE_ENV !== 'production' && warn(
@@ -99,12 +99,15 @@ export default class Watcher {
   /**
    * Evaluate the getter, and re-collect dependencies.
    */
+  // !!!添加了watcher
   get () {
     pushTarget(this)
     let value
     const vm = this.vm
     try {
-      // 执行getter函数 getter函数存取的就是updateComponent这个函数(更新函数)
+      // 渲染watcher：执行getter函数 getter函数存取的就是updateComponent这个函数(更新函数)
+      // 用户watcher：获取监听属性值
+      // 计算watcher：this.getter 就是用户传递的计算函数，调完这个函数就把dirty变为false
       value = this.getter.call(vm, vm)
     } catch (e) {
       if (this.user) {

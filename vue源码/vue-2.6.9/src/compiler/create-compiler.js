@@ -5,12 +5,14 @@ import { detectErrors } from './error-detector'
 import { createCompileToFunctionFn } from './to-function'
 
 export function createCompilerCreator (baseCompile: Function): Function {
+  // baseOptions 平台相关的options
+  // createCompiler 合并baseOptions和用户传递的options，并返回编译好的对象
   return function createCompiler (baseOptions: CompilerOptions) {
     function compile (
-      template: string,
-      options?: CompilerOptions
+      template: string,// 模板
+      options?: CompilerOptions// 用户传递的options选项
     ): CompiledResult {
-      const finalOptions = Object.create(baseOptions)
+      const finalOptions = Object.create(baseOptions)// 用于合并baseOptions和用户传递的options
       const errors = []
       const tips = []
 
@@ -66,7 +68,7 @@ export function createCompilerCreator (baseCompile: Function): Function {
       compiled.tips = tips
       return compiled
     }
-
+    // !!!createCompileToFunctionFn 是模板编译的入口
     return {
       compile,
       compileToFunctions: createCompileToFunctionFn(compile)

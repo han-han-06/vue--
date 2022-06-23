@@ -14,6 +14,7 @@ export function initProvide (vm: Component) {
 }
 // 传递注入进来的，是响应式
 export function initInjections (vm: Component) {
+  // 拿到inject中的所有属性，并把
   const result = resolveInject(vm.$options.inject, vm)
   if (result) {
     toggleObserving(false)
@@ -29,6 +30,7 @@ export function initInjections (vm: Component) {
           )
         })
       } else {
+        // 把所有属性变成响应式
         defineReactive(vm, key, result[key])
       }
     })

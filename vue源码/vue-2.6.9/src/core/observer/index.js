@@ -110,7 +110,7 @@ function copyAugment (target: Object, src: Object, keys: Array<string>) {
  * returns the new observer if successfully observed,
  * or the existing observer if the value already has one.
  */
-// 子任务 value存取的是data中的所有属性
+// 子任务 value存取的是判断是否需要双向绑定的值，比如一开始进行双向绑定的data
 export function observe (value: any, asRootData: ?boolean): Observer | void {
   if (!isObject(value) || value instanceof VNode) {
     return
@@ -143,6 +143,7 @@ export function defineReactive (
   customSetter?: ?Function,
   shallow?: boolean
 ) {
+  console.log('响应式的对象都是啥',obj)
   const dep = new Dep()
   // 看看对象里面有没有定义这个key
   const property = Object.getOwnPropertyDescriptor(obj, key)
@@ -173,7 +174,7 @@ export function defineReactive (
         if (childOb) {
           childOb.dep.depend()
           if (Array.isArray(value)) {
-            //如果值是数组，特殊处理
+            //如果值是数组，特殊处理 
             dependArray(value)
           }
         }
