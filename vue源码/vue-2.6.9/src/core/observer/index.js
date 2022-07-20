@@ -143,7 +143,6 @@ export function defineReactive (
   customSetter?: ?Function,
   shallow?: boolean
 ) {
-  console.log('响应式的对象都是啥',obj)
   const dep = new Dep()
   // 看看对象里面有没有定义这个key
   const property = Object.getOwnPropertyDescriptor(obj, key)

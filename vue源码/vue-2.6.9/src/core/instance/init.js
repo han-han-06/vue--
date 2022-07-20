@@ -53,7 +53,6 @@ export function initMixin (Vue: Class<Component>) {
     }
     // expose real self
     vm._self = vm
-    console.log('需要研究')
     // !!! 对vue实例进行初始化 需要研究
     initLifecycle(vm) // 初始化属性
     initEvents(vm) // 初始化事件 监听器初始化
@@ -63,7 +62,6 @@ export function initMixin (Vue: Class<Component>) {
     initState(vm) //!!!! 初始化组件的各种状态，data，computed，props
     initProvide(vm) // resolve provide after data/props
     callHook(vm, 'created')// 触发声明周期的钩子函数
-    console.log('走完created了')
     /* istanbul ignore if */
     if (process.env.NODE_ENV !== 'production' && config.performance && mark) {
       vm._name = formatComponentName(vm, false)
@@ -72,7 +70,6 @@ export function initMixin (Vue: Class<Component>) {
     }
     // 挂载整个页面
     if (vm.$options.el) {
-      console.log('走mounted了把',vm.$options.el)
       vm.$mount(vm.$options.el)
     }
   }

@@ -33,7 +33,6 @@ export function initRender (vm: Component) {
   // normalization is always applied for the public version, used in
   // user-written render functions.
   // !!!  render函数
-  console.log('11111111111走了么')
   // 对手写的render函数进行渲染的方法
   vm.$createElement = (a, b, c, d) => createElement(vm, a, b, c, d, true)
 
@@ -96,7 +95,6 @@ export function renderMixin (Vue: Class<Component>) {
       // !!! 算出虚拟节点
       // _renderProxy 其实就是vue实例   vm.$createElement就是咱们调用render时传给render的h函数
       // render就是模板编译的render函数
-      console.log('render',render)
       vnode = render.call(vm._renderProxy, vm.$createElement)
     } catch (e) {
       handleError(e, vm, `render`)

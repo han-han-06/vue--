@@ -18,10 +18,7 @@ Vue.prototype.$mount = function (
   el?: string | Element,
   hydrating?: boolean
 ): Component {
-  console.log('5555555走了么')
-
   el = el && query(el)
-  console.log('mounted el',el)
   /* istanbul ignore if */
   if (el === document.body || el === document.documentElement) {
     process.env.NODE_ENV !== 'production' && warn(

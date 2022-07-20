@@ -5,7 +5,6 @@ import { eventsMixin } from './events'
 import { lifecycleMixin } from './lifecycle'
 import { warn } from '../util/index'
 // !!! vue的构造函数
-console.log('代码最新执行这里，这是vue定义的地方')
 function Vue (options) {
   if (process.env.NODE_ENV !== 'production' &&
     !(this instanceof Vue)

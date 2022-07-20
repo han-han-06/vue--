@@ -9,7 +9,6 @@ const createRenderer = require('../../packages/vue-server-renderer').createRende
 const renderToStream = createRenderer().renderToStream
 const gridComponent = require('./common.js')
 
-console.log('--- renderToStream --- ')
 const self = (global || root)
 const s = self.performance.now()
 

@@ -13,7 +13,6 @@ let pending = false
 function flushCallbacks () {
   pending = false
   const copies = callbacks.slice(0);
-  console.log(copies,55555)
   callbacks.length = 0
   for (let i = 0; i < copies.length; i++) {
     copies[i]()
@@ -89,6 +88,7 @@ if (typeof Promise !== 'undefined' && isNative(Promise)) {
 }
 // 
 export function nextTick (cb?: Function, ctx?: Object) {
+  debugger
   let _resolve
   callbacks.push(() => {
     if (cb) {
